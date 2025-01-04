@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^5.4.1",
-    "inquirer": "^12.3.0"
+    "inquirer": "^12.3.0",
+    "node-notifier": "^10.0.1"
   },
   "type": "module"
 }
