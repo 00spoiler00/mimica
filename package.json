@@ -1,0 +1,16 @@
+{
+  "name": "mimica",
+  "version": "1.0.0",
+  "description": "Ordre i puntuacions per joc de mimica.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marc Boada",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "inquirer": "^12.3.0"
+  },
+  "type": "module"
+}
