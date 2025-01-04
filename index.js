@@ -2,8 +2,6 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import notifier from "node-notifier";
 
-const defaultPlayers = ["Mila", "Anna", "Marc"];
-
 async function main() {
   console.log(chalk.blueBright.bold("🎭 Benvingut al joc de mímica! 🎭\n"));
 
@@ -25,33 +23,43 @@ async function main() {
       type: "input",
       name: "playerNames",
       message:
-        "Introdueix els noms dels jugadors separats per comes (deixa buit per defecte):",
-      default: defaultPlayers.join(", "),
+        "Introdueix els noms dels jugadors separats per comes (mínim 3):",
       filter: (input) => input.split(",").map((name) => name.trim()),
+      validate: (input) =>
+        input.split(",").length >= 3
+          ? true
+          : "Has d'introduir almenys 3 noms de jugadors.",
     },
   ]);
 
-  if (playerNames.length !== 3) {
-    console.log(
-      chalk.red("⚠️ Cal introduir exactament tres noms de jugadors.")
-    );
-    return;
-  }
+  const players = playerNames; // Ja és un array després del `filter`
 
-  let scores = {
-    [playerNames[0]]: 0,
-    [playerNames[1]]: 0,
-    [playerNames[2]]: 0,
+  let scores = players.reduce((acc, player) => {
+    acc[player] = 0;
+    return acc;
+  }, {});
+
+  // Generar totes les permutacions de combinacions
+  const generateCombinations = (players) => {
+    const combinations = [];
+    for (let i = 0; i < players.length; i++) {
+      for (let j = 0; j < players.length; j++) {
+        if (i !== j) {
+          const others = players.filter(
+            (_, index) => index !== i && index !== j
+          );
+          combinations.push({
+            mimica: players[i],
+            endevina: players[j],
+            mira: others,
+          });
+        }
+      }
+    }
+    return combinations;
   };
 
-  const combinations = [
-    { mimica: playerNames[0], endevina: playerNames[1], mira: playerNames[2] },
-    { mimica: playerNames[0], endevina: playerNames[2], mira: playerNames[1] },
-    { mimica: playerNames[1], endevina: playerNames[0], mira: playerNames[2] },
-    { mimica: playerNames[1], endevina: playerNames[2], mira: playerNames[0] },
-    { mimica: playerNames[2], endevina: playerNames[0], mira: playerNames[1] },
-    { mimica: playerNames[2], endevina: playerNames[1], mira: playerNames[0] },
-  ];
+  const combinations = generateCombinations(players);
 
   let rounds = 0;
   let continueGame = true;
@@ -67,7 +75,7 @@ async function main() {
         chalk.green(
           `- ${chalk.bold(mimica)} fa mímica\n- ${chalk.bold(
             endevina
-          )} endevina\n- ${chalk.bold(mira)} mira.`
+          )} endevina\n- ${chalk.bold(mira.join(", "))} miren.`
         )
       );
 
